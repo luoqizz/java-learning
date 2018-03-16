@@ -22,20 +22,50 @@ package com.brianway.learning.java.base.jvmDemo;
  *
  */
 public class JvmDemo01 {
-    public static void main(String[] args) {
-        A a = new A();
-        System.out.println(a.width);
+    static {
+        System.out.println("初始化Demo01初始化块");
+    }
+
+    public static void main(String[] args) throws Exception {
+        System.out.println("Demo01Main方法");
+//        A a = new A();
+//        System.out.println(a.width);
+//        A a2 = new A();
+
+        //主动引用
+//        new A();
+//        System.out.println(A.width);
+//        Class.forName("com.brianway.learning.java.base.jvmDemo.A");
+
+        //被动引用
+//        System.out.println(A.MAX);
+//        A[] as = new A[10];
+        System.out.println(B.width);
     }
 }
 
-class A {
-    public static int width = 300;
+class B extends A{
+    static {
 
+        System.out.println("静态初始化B");
+    }
+
+}
+
+class A extends A_Father{
+    public static int width = 300;
+    public static final int MAX = 100;
     static {
         System.out.println("初始化静态类A");
         width = 100 ;
     }
     public A(){
         System.out.println("创建A类的对象");
+    }
+}
+
+class A_Father{
+    static{
+        System.out.println("初始化A_Father");
     }
 }
