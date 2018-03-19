@@ -25,5 +25,5 @@ class T implements Serializable{
     int i = 0 ;
     int j = 9 ;
     double d = 2.3;
-    int k = 0;
+    transient int k = 0; //transient 透明的 在序列化时不考虑该属性 赋默认值
 }
