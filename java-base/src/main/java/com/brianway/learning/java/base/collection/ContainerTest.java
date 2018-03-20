@@ -1,4 +1,4 @@
-package com.brianway.learning.java.base.container;
+package com.brianway.learning.java.base.collection;
 
 import java.util.ArrayList;
 import java.util.Collection;
