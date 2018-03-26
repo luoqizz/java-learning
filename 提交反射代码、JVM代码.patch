@@ -1,0 +1,476 @@
+Index: java-base/src/main/java/com/brianway/learning/java/base/jvmDemo/JvmDemo01.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- java-base/src/main/java/com/brianway/learning/java/base/jvmDemo/JvmDemo01.java	(date 1521102953034)
++++ java-base/src/main/java/com/brianway/learning/java/base/jvmDemo/JvmDemo01.java	(date 1521102953034)
+@@ -0,0 +1,41 @@
++package com.brianway.learning.java.base.jvmDemo;
++
++/**
++ * JVM类加载过程
++ * 一、加载
++ * 1.通过JVM将class文件加载到内存
++ * 2.并将这些静态数据转换成方法区中的运行时数据结构
++ * 3.在堆中生成一个代表这个类的java.lang.Class对象，作为方法区类数据的访问入口。这个过过程要类加载器进行参与
++ *
++ * 二、链接
++ * 将JAVA类的二进制代码合并到JVM的运行状态之中的过程
++ * 1.验证：确保加载类的信息符合JVM规范，没有安全方面的问题。
++ * 2.准备：正式为类变量（static变量）分配内存并设置类变量初始值的阶段，这些内存都将在方法区中进行分配
++ * 3.解析：虚拟机常量池内的符号引用替换为直接引用的过程。
++ *
++ * 三、初始化
++ * 1.初始化阶段是执行类构造器<clinit>()方法的过程。类构造器<clinit>()方法是由编译器自动收集类中
++ * 的所有类变量的赋值动作和静态语句块（static块）中的语句合并产生的。
++ * 2.当初始化一个类的时候，如果发现其父类还没有进行过初始化、则需要先触发其父类的初始化
++ * 3.虚拟机会保证一个类的<clinit>()方法在多线程环境中被正确加锁和同步。
++ * 4.当访问一个Java类的静态域时，只有真正声明这个域的类才会被初始化。
++ *
++ */
++public class JvmDemo01 {
++    public static void main(String[] args) {
++        A a = new A();
++        System.out.println(a.width);
++    }
++}
++
++class A {
++    public static int width = 300;
++
++    static {
++        System.out.println("初始化静态类A");
++        width = 100 ;
++    }
++    public A(){
++        System.out.println("创建A类的对象");
++    }
++}
+\ No newline at end of file
+Index: java-base/src/main/java/com/brianway/learning/java/base/reflection/bean/Student.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- java-base/src/main/java/com/brianway/learning/java/base/reflection/bean/Student.java	(date 1521084736951)
++++ java-base/src/main/java/com/brianway/learning/java/base/reflection/bean/Student.java	(date 1521084736951)
+@@ -0,0 +1,61 @@
++package com.brianway.learning.java.base.reflection.bean;
++
++/**
++ * 反射基础Bean
++ * http://blog.csdn.net/sinat_38259539/article/details/71799078
++ */
++public class Student {
++    private int id;
++    private int age;
++    private String name;
++    public int aa;
++
++    public int getAa() {
++        return aa;
++    }
++
++    public void setAa(int aa) {
++        this.aa = aa;
++    }
++
++    public int getId() {
++        return id;
++    }
++
++    public void setId(int id) {
++        this.id = id;
++    }
++
++    public int getAge() {
++        return age;
++    }
++
++    public void setAge(int age) {
++        this.age = age;
++    }
++
++    public String getName() {
++        return name;
++    }
++
++    public void setName(String name) {
++        this.name = name;
++    }
++
++    public Student() {
++        System.out.println("我是无参构造方法");
++    }
++
++    public Student(int id, int age, String name) {
++        this.id = id;
++        this.age = age;
++        this.name = name;
++
++        System.out.println("id:"+id+"==age:"+age+"===name:"+name);
++    }
++
++    private Student(String name) {
++        System.out.println("你好："+name);
++    }
++
++}
+Index: java-base/src/main/java/com/brianway/learning/java/base/reflection/bean/StudentMain.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- java-base/src/main/java/com/brianway/learning/java/base/reflection/bean/StudentMain.java	(date 1521084401186)
++++ java-base/src/main/java/com/brianway/learning/java/base/reflection/bean/StudentMain.java	(date 1521084401186)
+@@ -0,0 +1,7 @@
++package com.brianway.learning.java.base.reflection.bean;
++
++public class StudentMain {
++    public static void main(String[] args) {
++        System.out.println("main方法执行了。。。");
++    }
++}
+Index: java-base/src/main/java/com/brianway/learning/java/base/reflection/test/ConstructorsDemo.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- java-base/src/main/java/com/brianway/learning/java/base/reflection/test/ConstructorsDemo.java	(date 1521085049032)
++++ java-base/src/main/java/com/brianway/learning/java/base/reflection/test/ConstructorsDemo.java	(date 1521085049032)
+@@ -0,0 +1,56 @@
++package com.brianway.learning.java.base.reflection.test;
++
++import java.lang.reflect.Constructor;
++/*
++ * 通过Class对象可以获取某个类中的：构造方法、成员变量、成员方法；并访问成员；
++ *
++ * 1.获取构造方法：
++ *      1).批量的方法：
++ *          public Constructor[] getConstructors()：所有"公有的"构造方法
++            public Constructor[] getDeclaredConstructors()：获取所有的构造方法(包括私有、受保护、默认、公有)
++
++ *      2).获取单个的方法，并调用：
++ *          public Constructor getConstructor(Class... parameterTypes):获取单个的"公有的"构造方法：
++ *          public Constructor getDeclaredConstructor(Class... parameterTypes):获取"某个构造方法"可以是私有的，或受保护、默认、公有；
++ *
++ *          调用构造方法：
++ *          Constructor-->newInstance(Object... initargs)
++ */
++public class ConstructorsDemo {
++    public static void main(String[] args) {
++        try {
++            System.out.println("加载Class对象");
++            Class stuClass3 = Class.forName("com.brianway.learning.java.base.reflection.bean.Student");
++            System.out.println("获取所有公共构造方法");
++            Constructor [] conarray = stuClass3.getConstructors();
++
++            for (Constructor c: conarray) {
++                System.out.println(c);
++            }
++            System.out.println("************所有的构造方法(包括：私有、受保护、默认、公有)***************");
++            Constructor [] conarray01 = stuClass3.getDeclaredConstructors();
++            for (Constructor c: conarray01) {
++                System.out.println(c);
++            }
++            System.out.println("*****************获取公有、无参的构造方法*******************************");
++            Constructor con01 = stuClass3.getConstructor();
++            System.out.println(con01);
++            //调用构造方法
++            con01.newInstance();
++            System.out.println("******************获取私有构造方法，并调用*******************************");
++            Constructor con02 = stuClass3.getDeclaredConstructor(String.class);
++            System.out.println(con02);
++            //不需要安全检查私有方法或属性 可以直接访问
++            con02.setAccessible(true);
++            con02.newInstance("呵呵");
++            System.out.println("******************获取多参数构造方法，并调用*******************************");
++            Constructor con03 = stuClass3.getConstructor(int.class,int.class,String.class);
++            System.out.println(con03);
++            con03.newInstance(1,22,"呵呵");
++
++
++        } catch (Exception e) {
++            e.printStackTrace();
++        }
++    }
++}
+Index: java-base/src/main/java/com/brianway/learning/java/base/reflection/test/fanshe.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- java-base/src/main/java/com/brianway/learning/java/base/reflection/test/fanshe.java	(date 1521078291169)
++++ java-base/src/main/java/com/brianway/learning/java/base/reflection/test/fanshe.java	(date 1521078291169)
+@@ -0,0 +1,38 @@
++package com.brianway.learning.java.base.reflection.test;
++
++import com.brianway.learning.java.base.reflection.bean.Student;
++
++/**
++ * 获取Class对象的三种方式
++ * 1 Object ——> getClass();
++ * 2 任何数据类型（包括基本数据类型）都有一个“静态”的class属性
++ * 3 通过Class类的静态方法：forName（String  className）(常用)
++ *  在运行期间，一个类，只有一个Class对象产生
++ *
++ *  三种方式常用第三种，
++ *  第一种对象都有了还要反射干什么。
++ *  第二种需要导入类的包，依赖太强，不导包就抛编译错误。
++ *  一般都第三种，一个字符串可以传入也可写在配置文件中等多种方法。
++ */
++public class fanshe {
++    public static void main(String[] args) {
++        //第一种方法获得Class对象
++        Student stu1 = new Student();
++        Class stuClass = stu1.getClass();
++        System.out.println(stuClass.getName());
++
++        //第二种方法获得Class对象
++        Class stuClass2 = new Student().getClass();
++        System.out.println(stuClass2.getName());
++
++        //第三种方法获得Class对象
++        try {
++            Class stuClass3 = Class.forName("com.brianway.learning.java.base.reflection.bean.Student");
++            System.out.println(stuClass3.getName());
++        } catch (ClassNotFoundException e) {
++            e.printStackTrace();
++        }
++    }
++
++
++}
+Index: java-base/src/main/java/com/brianway/learning/java/base/reflection/test/FieldsDemo01.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- java-base/src/main/java/com/brianway/learning/java/base/reflection/test/FieldsDemo01.java	(date 1521083767511)
++++ java-base/src/main/java/com/brianway/learning/java/base/reflection/test/FieldsDemo01.java	(date 1521083767511)
+@@ -0,0 +1,66 @@
++package com.brianway.learning.java.base.reflection.test;
++
++import com.brianway.learning.java.base.reflection.bean.Student;
++
++import java.lang.reflect.Field;
++
++/*
++ * 获取成员变量并调用：
++ *
++ * 1.批量的
++ *      1).Field[] getFields():获取所有的"公有字段"
++ *      2).Field[] getDeclaredFields():获取所有字段，包括：私有、受保护、默认、公有；
++ * 2.获取单个的：
++ *      1).public Field getField(String fieldName):获取某个"公有的"字段；
++ *      2).public Field getDeclaredField(String fieldName):获取某个字段(可以是私有的)
++ *
++ *   设置字段的值：
++ *      Field --> public void set(Object obj,Object value):
++ *                  参数说明：
++ *                  1.obj:要设置的字段所在的对象；
++ *                  2.value:要为字段设置的值；
++ *
++ */
++public class FieldsDemo01 {
++    public static void main(String[] args) {
++        //1.获取class对象
++        try {
++            Class stuClass = Class.forName("com.brianway.learning.java.base.reflection.bean.Student");
++            //2.获取字段
++            System.out.println("************获取所有公有的字段********************");
++            Field [] fs01 = stuClass.getFields();
++            for (Field f:fs01 ) {
++                System.out.println(f);
++            }
++            System.out.println("************获取所有的字段(包括私有、受保护、默认的)********************");
++            Field [] fs02 = stuClass.getDeclaredFields();
++            for (Field f:fs02 ) {
++                System.out.println(f);
++            }
++            System.out.println("*************获取公有字段**并调用***********************************");
++            Field aa = stuClass.getField("aa");
++            System.out.println(aa);
++            //获取一个对象
++            Object obj = stuClass.newInstance();
++            aa.set(obj,123);
++
++            //验证
++            Student stu = (Student) obj;
++            System.out.println(stu.getAa());
++
++            System.out.println("**************获取私有字段****并调用********************************");
++            Field name = stuClass.getDeclaredField("name");
++            System.out.println(name);
++            Object obj1 = stuClass.newInstance();
++            name.setAccessible(true);//暴力反射，解除私有限定
++            name.set(obj1,"呜呜呜");
++            //验证
++            Student stu1 = (Student) obj1;
++            System.out.println(stu1.getName());
++
++        } catch (Exception e) {
++            e.printStackTrace();
++        }
++
++    }
++}
+Index: java-base/src/main/java/com/brianway/learning/java/base/reflection/test/GenericDemo.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- java-base/src/main/java/com/brianway/learning/java/base/reflection/test/GenericDemo.java	(date 1521087007267)
++++ java-base/src/main/java/com/brianway/learning/java/base/reflection/test/GenericDemo.java	(date 1521087007267)
+@@ -0,0 +1,53 @@
++package com.brianway.learning.java.base.reflection.test;
++
++import com.brianway.learning.java.base.reflection.bean.Student;
++
++import java.lang.reflect.Method;
++import java.lang.reflect.ParameterizedType;
++import java.lang.reflect.Type;
++import java.util.List;
++import java.util.Map;
++
++/**
++ * 反射中泛型的获取
++ */
++public class GenericDemo {
++    public void test01(Map<String,Student> map, List<Student> list){
++        System.out.println("test01");
++    }
++
++    public Map<String,Student> test02(){
++        System.out.println("test02");
++        return null;
++    }
++
++    public static void main(String[] args) {
++        try {
++            System.out.println("======================================");
++            //获得指定方法参数泛型类型
++            Method m = GenericDemo.class.getMethod("test01", Map.class, List.class);
++            Type [] t = m.getGenericParameterTypes();
++            for (Type paramType:t){
++                System.out.println("#"+paramType);
++                if (paramType instanceof ParameterizedType){
++                    Type [] genericTypes = ((ParameterizedType) paramType).getActualTypeArguments();
++                    for (Type genericType:genericTypes){
++                        System.out.println("泛型类型："+genericType);
++                    }
++                }
++            }
++            System.out.println("======================================");
++            //获得指定方法返回值泛型信息
++            Method m2 = GenericDemo.class.getMethod("test02");
++            Type  t1 = m2.getGenericReturnType();
++            Type [] genericTypes = ((ParameterizedType) t1).getActualTypeArguments();
++            for (Type genericType:genericTypes){
++                System.out.println("泛型类型："+genericType);
++            }
++
++        } catch (Exception e) {
++            e.printStackTrace();
++        }
++    }
++
++}
+Index: java-base/src/main/java/com/brianway/learning/java/base/reflection/test/MainDemo.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- java-base/src/main/java/com/brianway/learning/java/base/reflection/test/MainDemo.java	(date 1521084736945)
++++ java-base/src/main/java/com/brianway/learning/java/base/reflection/test/MainDemo.java	(date 1521084736945)
+@@ -0,0 +1,23 @@
++package com.brianway.learning.java.base.reflection.test;
++
++import java.lang.reflect.Method;
++
++public class MainDemo {
++    public static void main(String[] args) {
++        try {
++            Class clazz = Class.forName("com.brianway.learning.java.base.reflection.bean.StudentMain");
++            //2.获取该Class类的main方法
++
++            Method main = clazz.getMethod("main", String[].class);//第一个参数：方法名称，第二个参数：方法形参的类型，
++            //3、调用main方法
++            // methodMain.invoke(null, new String[]{"a","b","c"});
++            //第一个参数，对象类型，因为方法是static静态的，所以为null可以，第二个参数是String数组，这里要注意在jdk1.4时是数组，jdk1.5之后是可变参数
++            //这里拆的时候将  new String[]{"a","b","c"} 拆成3个对象。。。所以需要将它强转。
++            main.invoke(null, (Object)new String[]{"a","b","c"});//方式一
++            // methodMain.invoke(null, new Object[]{new String[]{"a","b","c"}});//方式二
++
++        } catch (Exception e) {
++            e.printStackTrace();
++        }
++    }
++}
+Index: java-base/src/main/java/com/brianway/learning/java/base/reflection/test/MethodDemo.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- java-base/src/main/java/com/brianway/learning/java/base/reflection/test/MethodDemo.java	(date 1521084306511)
++++ java-base/src/main/java/com/brianway/learning/java/base/reflection/test/MethodDemo.java	(date 1521084306511)
+@@ -0,0 +1,58 @@
++package com.brianway.learning.java.base.reflection.test;
++
++import java.lang.reflect.Method;
++
++/*
++ * 获取成员方法并调用：
++ *
++ * 1.批量的：
++ *      public Method[] getMethods():获取所有"公有方法"；（包含了父类的方法也包含Object类）
++ *      public Method[] getDeclaredMethods():获取所有的成员方法，包括私有的(不包括继承的)
++ * 2.获取单个的：
++ *      public Method getMethod(String name,Class<?>... parameterTypes):
++ *                  参数：
++ *                      name : 方法名；
++ *                      Class ... : 形参的Class类型对象
++ *      public Method getDeclaredMethod(String name,Class<?>... parameterTypes)
++ *
++ *   调用方法：
++ *      Method --> public Object invoke(Object obj,Object... args):
++ *                  参数说明：
++ *                  obj : 要调用方法的对象；
++ *                  args:调用方式时所传递的实参；
++
++):
++ */
++public class MethodDemo {
++    public static void main(String[] args) throws Exception {
++        //1.获取Class对象
++        Class stuClass = Class.forName("com.brianway.learning.java.base.reflection.bean.Student");
++        //2.获取所有公有方法
++        System.out.println("***************获取所有的”公有“方法*******************");
++        stuClass.getMethods();
++        Method[] methodArray = stuClass.getMethods();
++        for(Method m : methodArray){
++            System.out.println(m);
++        }
++        System.out.println("***************获取所有的方法，包括私有的*******************");
++        methodArray = stuClass.getDeclaredMethods();
++        for(Method m : methodArray){
++            System.out.println(m);
++        }
++        System.out.println("***************获取公有的show1()方法*******************");
++        Method m = stuClass.getMethod("setName", String.class);
++        System.out.println(m);
++        //实例化一个Student对象
++        Object obj = stuClass.getConstructor().newInstance();
++        m.invoke(obj, "刘德华");
++
++        System.out.println("***************获取私有的show4()方法******************");
++        m = stuClass.getDeclaredMethod("setAa", int.class);
++        System.out.println(m);
++        m.setAccessible(true);//解除私有限定
++        Object result = m.invoke(obj, 20);//需要两个参数，一个是要调用的对象（获取有反射），一个是实参
++        System.out.println("返回值：" + result);
++
++
++    }
++}

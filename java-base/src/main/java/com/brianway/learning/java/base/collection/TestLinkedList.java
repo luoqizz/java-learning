@@ -68,9 +68,17 @@ public class TestLinkedList {
         Node temp = null;
         if(first != null){
             temp = first;
-            for (int i = 0 ; i<index ; i++){
-                temp = temp.getNext();
+            //如果要查的index 在后面则从后往前查，如果在前面则从前往后查 增加效率
+            if(index < (size >>  1)){
+                for (int i = 0 ; i < index ; i++){
+                    temp = temp.getNext();
+                }
+            } else {
+                for (int i = size -1 ; i > index ; i--){
+                    temp = temp.getPrevious();
+                }
             }
+
         }
         return temp;
     }
@@ -94,9 +102,11 @@ public class TestLinkedList {
         list.add("aaaaa");
         list.add("bbbbb");
         list.add("ccccc");
+        list.add("ccccc");
+        list.add("ccccc");
         list.add("BBBB",1);
         System.out.println(list.size());
-        System.out.println(list.get(1));
+        System.out.println(list.get(5));
         System.out.println(list.size());
     }
 }
